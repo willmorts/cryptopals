@@ -13,10 +13,13 @@ def hex_to_64(hex):
         
 #================ Set 1, Challenge 2 ================== 
 def fixed_xor(hex_one,hex_two): 
-    int_data_one = int(hex_one,16)
-    int_data_two = int(hex_two,16)
-        
-    return hex(int_data_one^int_data_two)[2:][:-1]
+    hex_data_one = int(hex_one,16)
+    hex_data_two = int(hex_two,16)
+    
+    hex_result = hex_data_one ^ hex_data_two
+    
+    hex_result = "{0:#0{1}x}".format(hex_result,len(hex_one)+2)
+    return hex_result[2:]
 
 #================ Set 1, Challenge 3 ================== 
 def single_byte_xor_cipher(hex):
@@ -72,6 +75,32 @@ def detect_single_char_xor(file_to_test):
     result = re.sub('[^0-9a-zA-Z ]+', '', result)
     
     return result,min_score
+    
+#================ Set 1, Challenge 5 ================== 
+def implement_repeating_key_xor(file_to_encrypt,key):
+    with open(file_to_encrypt) as data_file: 
+        text_list = data_file.readlines()
+    
+    text = ''.join(text_list)
+    print text_list
+         
+    hex_of_text = text.encode("hex")
+    hex_of_key = key.encode("hex")
+    full_key_list = []
+    
+    index_of_key = 0
+    for index in range(0,len(hex_of_text)):
+        if (index_of_key == len(hex_of_key)):
+            index_of_key = 0
+        full_key_list.append(hex_of_key[index_of_key])
+        index_of_key += 1
+    
+    full_key = ''.join(full_key_list)
+    
+    hex_encrypted = fixed_xor(hex_of_text,full_key);
+
+    print hex_encrypted
+    return hex_encrypted;
 
 #================ Set 1, Challenges 3 & 4 useful function ================== 
     
@@ -113,4 +142,7 @@ def stringify_ascii_array(ascii_array):
     for character in ascii_array:
         string_arr.append(unichr(character))
     
-    return ''.join(string_arr)    
+    return ''.join(string_arr)
+    
+if __name__ == "__main__":
+    implement_repeating_key_xor("Set1Challenge5InputFile.txt","ICE")
