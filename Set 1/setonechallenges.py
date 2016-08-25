@@ -80,9 +80,7 @@ def detect_single_char_xor(file_to_test):
 def implement_repeating_key_xor(file_to_encrypt,key):
     with open(file_to_encrypt) as data_file: 
         text_list = data_file.readlines()
-    
     text = ''.join(text_list)
-    print text_list
          
     hex_of_text = text.encode("hex")
     hex_of_key = key.encode("hex")
@@ -98,8 +96,6 @@ def implement_repeating_key_xor(file_to_encrypt,key):
     full_key = ''.join(full_key_list)
     
     hex_encrypted = fixed_xor(hex_of_text,full_key);
-
-    print hex_encrypted
     return hex_encrypted;
 
 #================ Set 1, Challenges 3 & 4 useful function ================== 
@@ -114,7 +110,7 @@ def check_score_english_frequency(ascii_array):
         'x': 0.000, 'y': 0.000, 'z': 0.000}
     total = 0
     
-    with open('letterFrequencies.json') as data_file:    
+    with open('UsefulDataFiles/letterFrequencies.json') as data_file:    
         data = json.load(data_file)
     
     for ascii_character in ascii_array:
