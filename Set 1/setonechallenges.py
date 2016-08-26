@@ -16,9 +16,9 @@ def fixed_xor(hex_one,hex_two):
     hex_data_one = int(hex_one,16)
     hex_data_two = int(hex_two,16)
     
-    hex_result = hex_data_one ^ hex_data_two
+    long_result = hex_data_one ^ hex_data_two
     
-    hex_result = "{0:#0{1}x}".format(hex_result,len(hex_one)+2)
+    hex_result = "{0:#0{1}x}".format(long_result,len(hex_one)+2)
     return hex_result[2:]
 
 #================ Set 1, Challenge 3 ================== 
@@ -75,7 +75,7 @@ def detect_single_char_xor(file_to_test):
     result = re.sub('[^0-9a-zA-Z ]+', '', result)
     
     return result,min_score
-    
+
 #================ Set 1, Challenge 5 ================== 
 def implement_repeating_key_xor(file_to_encrypt,key):
     with open(file_to_encrypt) as data_file: 
@@ -97,8 +97,101 @@ def implement_repeating_key_xor(file_to_encrypt,key):
     
     hex_encrypted = fixed_xor(hex_of_text,full_key);
     return hex_encrypted;
+    
+def unencrypt_repeating_key_xor(hex_str,key_ascii):
+    hex_of_text = hex_str
+    hex_of_key = key_ascii.encode("hex")
+    full_key_list = []
+    
+    index_of_key = 0
+    for index in range(0,len(hex_of_text)):
+        if (index_of_key == len(hex_of_key)):
+            index_of_key = 0
+        full_key_list.append(hex_of_key[index_of_key])
+        index_of_key += 1
+    
+    full_key = ''.join(full_key_list)
+    
+    hex_unencrypted = fixed_xor(hex_of_text,full_key);
+    return hex_unencrypted;
+    
+#================ Set 1, Challenge 6 ================== 
+def break_repeating_key_xor(file_to_break):
+    str_encryption = read_file(file_to_break)
+    hex_of_data = b64_to_hex(str_encryption)
+    total_byte_array = bytearray.fromhex(hex_of_data)
+    
+    ranked_list_keysizes = get_ranked_key_lengths(total_byte_array)
+    grouped_byte_arr = group_repeat_key(total_byte_array,ranked_list_keysizes[0][0])
+    
+    grouped_hex_arr = []
+    for index in range (0,len(grouped_byte_arr)):
+        grouped_hex_arr.append(byte_array_to_hex(grouped_byte_arr[index]))
+        
+    cracked_hex_arr = []
+    for index in range (0,len(grouped_hex_arr)):
+        cracked_hex_arr.append(single_byte_xor_cipher(grouped_hex_arr[index])[0])
+    
+    cracked_str = re_order_grouped_list(cracked_hex_arr)
 
-#================ Set 1, Challenges 3 & 4 useful function ================== 
+    print cracked_str
+    
+def re_order_grouped_list(unicode_list):
+    ordered_str = ''
+    key_length = len(unicode_list)
+    
+    for letter_index in range(0,len(unicode_list[0])):
+        for group_index in range(0,key_length):
+            if (len(unicode_list[group_index]) > letter_index):
+                ordered_str += unicode_list[group_index][letter_index]                
+            
+    return ordered_str
+    
+def group_repeat_key(total_byte_array,key_length):
+    list_grouped_byte_arr = [bytearray]*key_length
+    
+#    Create group of same cypher 
+    list_byte_arr = []
+    for groupNumber in range(0,key_length): 
+        group = bytearray()
+        for index in range(0,len(total_byte_array)/key_length):
+            group.append(total_byte_array[(index*key_length)+groupNumber])
+        
+        list_byte_arr.append(group) 
+           
+    return list_byte_arr    
+         
+
+def get_ranked_key_lengths(total_byte_array):
+    norm_hamm_diffs = []
+    max_keysize = 40
+    
+    for test_keysize in range(2,max_keysize+1):
+        total_hamm_diffs = 0
+        num_hamm_diffs = 0
+        for loop_byte in range(0,(len(total_byte_array)/test_keysize)-test_keysize):
+            keysize_chunk = loop_byte*test_keysize
+            first_byte_arr = total_byte_array[keysize_chunk:(keysize_chunk+test_keysize)]
+            second_byte_arr = total_byte_array[(keysize_chunk+test_keysize):(keysize_chunk+(test_keysize*2))]
+            hamm_diff = compute_hamming_distance(first_byte_arr,second_byte_arr)
+            total_hamm_diffs += hamm_diff
+            num_hamm_diffs += 1
+        
+        if (num_hamm_diffs != 0):
+            current_avg_hamm_diffs = total_hamm_diffs/float(num_hamm_diffs)
+        else:
+            current_avg_hamm_diffs = 0
+        
+        if (current_avg_hamm_diffs != 0):
+            norm_hamm_diffs.append((test_keysize,(current_avg_hamm_diffs/test_keysize)))
+        else:
+            norm_hamm_diffs.append((test_keysize,8))
+#    Sort into ascending order
+    norm_hamm_diffs.sort(key=lambda tup: tup[1])
+        
+    return norm_hamm_diffs
+
+#================ USEFUL FUNCTIONS ================== 
     
 # FUNCTION CHECKS HOW WELL IT MATCHES TO THE FREQUENCY OF CHARACTERS IN ENGLISH PLAINTEXT
 def check_score_english_frequency(ascii_array):
@@ -140,5 +233,37 @@ def stringify_ascii_array(ascii_array):
     
     return ''.join(string_arr)
     
-if __name__ == "__main__":
-    implement_repeating_key_xor("Set1Challenge5InputFile.txt","ICE")
+def compute_hamming_distance(byte_arr_one,byte_arr_two):
+    num_differing_bits = 0
+
+    for index in range(0,len(byte_arr_one)):
+        differing_bits = byte_arr_one[index] ^ byte_arr_two[index]
+        num_differing_bits += bin(differing_bits).count("1")
+    
+    return num_differing_bits
+
+def b64_to_hex(base64_str):
+    decoded_data = base64_str.decode("base64")
+    result = decoded_data.encode("hex")
+        
+    return result
+    
+def read_file(file_to_read):
+    with open(file_to_read) as data_file: 
+        text_list = data_file.readlines()
+    
+    return ''.join(text_list)    
+
+def byte_array_to_hex(byte_array):
+    return ''.join(format(x, '02x') for x in byte_array)
+        
+  
+if __name__ == "__main__":        
+#    print b64_to_hex(read_file("TestInputFiles/Set1Challenge6SuppliedFile.txt"))
+    break_repeating_key_xor('TestInputFiles/Set1Challenge6SuppliedFile.txt')    
+    
+    
+    
+    
+   
+        

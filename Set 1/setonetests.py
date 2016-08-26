@@ -15,14 +15,18 @@ class TestMethods(unittest.TestCase):
 #    Set 1, Challenge 3
     def test_decode_xor(self):
         self.assertEqual(single_byte_xor_cipher('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736')[0], "Cooking MC's like a pound of bacon")
-
-#    Set 1, Challenge 4
+#
+##    Set 1, Challenge 4
     def test_detect_single_xor(self):
         self.assertEqual(detect_single_char_xor("TestInputFiles/Set1Challenge4SuppliedFile.txt")[0], "Now that the party is jumping")
   
 #    Set 1, Challenge 5
     def test_implement_repeating_key_xor(self):
         self.assertEqual(implement_repeating_key_xor("TestInputFiles/Set1Challenge5InputFile.txt","ICE"),"0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f")
+    
+#    Set 1, Challenge 6    
+    def test_break_repeating_key_xor(self):
+        self.assertEqual(break_repeating_key_xor("TestInputFiles/Set1Challenge6SuppliedFile.txt"),"Success")
    
 if __name__ == "__main__":
     unittest.main()
