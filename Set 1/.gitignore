@@ -1,0 +1,5 @@
+Crypto/
+pycrypto/
+.DS_Store
+../.DS_Store
+env/
