@@ -26,7 +26,11 @@ class TestMethods(unittest.TestCase):
     
 #    Set 1, Challenge 6    
     def test_break_repeating_key_xor(self):
-        self.assertEqual(break_repeating_key_xor("TestInputFiles/Set1Challenge6SuppliedFile.txt"),"Success")
+        self.assertEqual(break_repeating_key_xor("TestInputFiles/Set1Challenge6SuppliedFile.txt"),read_file("TestInputFiles/Set1Challenge6Answer.txt"))
+        
+#    Set 1, Challenge 7
+    def test_unencrypt_AES128ECB(self):
+        self.assertEqual(unencrypt_AES128ECB("TestInputFiles/Set1Challenge7SuppliedFile.txt","YELLOW SUBMARINE"),read_file("TestInputFiles/Set1Challenge7Answer.txt"))
    
 if __name__ == "__main__":
     unittest.main()
