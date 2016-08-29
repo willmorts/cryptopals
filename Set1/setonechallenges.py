@@ -4,23 +4,17 @@ import base64
 import json
 import re
 from Crypto.Cipher import AES
+from willcrypto import *
 
 #================ Set 1, Challenge 1 ==================
-def hex_to_64(hex):
-    hex_data = hex.decode("hex")
-    result = base64.b64encode(hex_data)
-        
-    return result
+def set_one_challenge_one(hex):
+    return hex_to_64(hex)
         
 #================ Set 1, Challenge 2 ================== 
-def fixed_xor(hex_one,hex_two): 
-    hex_data_one = int(hex_one,16)
-    hex_data_two = int(hex_two,16)
-    
-    long_result = hex_data_one ^ hex_data_two
-    
-    hex_result = "{0:#0{1}x}".format(long_result,len(hex_one)+2)
-    return hex_result[2:]
+def set_one_challenge_two(hex_one,hex_two):
+    byte_array_one = hex_to_byte_array(hex_one)
+    byte_array_two = hex_to_byte_array(hex_two)
+    return byte_array_to_hex(fixed_xor_byte_array(byte_array_one,byte_array_two))
 
 #================ Set 1, Challenge 3 ================== 
 def single_byte_xor_cipher(hex):
@@ -53,7 +47,6 @@ def single_byte_xor_cipher(hex):
         ascii_array.append(new_char)
         
     string_result = stringify_ascii_array(ascii_array)
-
     return string_result,min_score
     
 #================ Set 1, Challenge 4 ================== 
@@ -78,26 +71,12 @@ def detect_single_char_xor(file_to_test):
     return result,min_score
 
 #================ Set 1, Challenge 5 ================== 
-def implement_repeating_key_xor(file_to_encrypt,key):
-    with open(file_to_encrypt) as data_file: 
-        text_list = data_file.readlines()
-    text = ''.join(text_list)
-         
-    hex_of_text = text.encode("hex")
-    hex_of_key = key.encode("hex")
-    full_key_list = []
-    
-    index_of_key = 0
-    for index in range(0,len(hex_of_text)):
-        if (index_of_key == len(hex_of_key)):
-            index_of_key = 0
-        full_key_list.append(hex_of_key[index_of_key])
-        index_of_key += 1
-    
-    full_key = ''.join(full_key_list)
-    
-    hex_encrypted = fixed_xor(hex_of_text,full_key);
-    return hex_encrypted;
+def set_one_challenge_five(file_to_encrypt,key):    
+    text = read_file(file_to_encrypt) 
+    byte_array_of_text = text_to_byte_array(text)
+    byte_array_key = text_to_byte_array(key)
+    byte_array_encrypted = repeating_key_xor(byte_array_of_text,byte_array_key)
+    return byte_array_to_hex(byte_array_encrypted)
     
 def unencrypt_repeating_key_xor(hex_str,key_ascii):
     hex_of_text = hex_str
@@ -260,29 +239,10 @@ def compute_hamming_distance(byte_arr_one,byte_arr_two):
     
     return num_differing_bits
 
-def b64_to_hex(base64_str):
-    decoded_data = base64_str.decode("base64")
-    result = decoded_data.encode("hex")
-        
-    return result
-    
-def read_file(file_to_read):
-    with open(file_to_read) as data_file: 
-        text_list = data_file.readlines()
-    
-    return ''.join(text_list)    
-    
-def write_file(file_to_write,string_to_write):
-    with open(file_to_write, 'w') as data_file: 
-        data_file.write(string_to_write)
-        
-
-def byte_array_to_hex(byte_array):
-    return ''.join(format(x, '02x') for x in byte_array)
         
   
 if __name__ == "__main__":        
-     unencrypt_AES128ECB("TestInputFiles/Set1Challenge7SuppliedFile.txt","YELLOW SUBMARINE")
+     fixed_xor('1c0111001f010100061a024b53535009181c','686974207468652062756c6c277320657965')
     
     
     

@@ -3,3 +3,4 @@ pycrypto/
 .DS_Store
 ../.DS_Store
 env/
+*.pyc
