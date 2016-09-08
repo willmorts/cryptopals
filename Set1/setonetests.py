@@ -14,11 +14,11 @@ class TestMethods(unittest.TestCase):
           
 #    Set 1, Challenge 3
     def test_decode_xor(self):
-        self.assertEqual(single_byte_xor_cipher('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736')[0], "Cooking MC's like a pound of bacon")
-#
-##    Set 1, Challenge 4
+        self.assertEqual(set_one_challenge_three('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'), "Cooking MC's like a pound of bacon")
+
+#    Set 1, Challenge 4
     def test_detect_single_xor(self):
-        self.assertEqual(detect_single_char_xor("TestInputFiles/Set1Challenge4SuppliedFile.txt")[0], "Now that the party is jumping")
+        self.assertEqual(set_one_challenge_four("TestInputFiles/Set1Challenge4SuppliedFile.txt")[0], "Now that the party is jumping\n")
   
 #    Set 1, Challenge 5
     def test_implement_repeating_key_xor(self):
@@ -26,11 +26,11 @@ class TestMethods(unittest.TestCase):
     
 #    Set 1, Challenge 6    
     def test_break_repeating_key_xor(self):
-        self.assertEqual(break_repeating_key_xor("TestInputFiles/Set1Challenge6SuppliedFile.txt"),read_file("TestInputFiles/Set1Challenge6Answer.txt"))
+        self.assertEqual(set_one_challenge_six("TestInputFiles/Set1Challenge6SuppliedFile.txt"),read_file("TestInputFiles/Set1Challenge6Answer.txt"))
         
 #    Set 1, Challenge 7
     def test_unencrypt_AES128ECB(self):
-        self.assertEqual(unencrypt_AES128ECB("TestInputFiles/Set1Challenge7SuppliedFile.txt","YELLOW SUBMARINE"),read_file("TestInputFiles/Set1Challenge7Answer.txt"))
+        self.assertEqual(set_one_challenge_seven("TestInputFiles/Set1Challenge7SuppliedFile.txt","YELLOW SUBMARINE"),read_file("TestInputFiles/Set1Challenge7Answer.txt"))
    
 if __name__ == "__main__":
     unittest.main()
