@@ -1,1 +1,4 @@
-# cryptopals
+# Cryptopals
+
+## Requirements
+- pycrypto

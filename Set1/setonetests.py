@@ -22,15 +22,19 @@ class TestMethods(unittest.TestCase):
   
 #    Set 1, Challenge 5
     def test_implement_repeating_key_xor(self):
-        self.assertEqual(set_one_challenge_five("TestInputFiles/Set1Challenge5InputFile.txt","ICE"),"0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f")
+        self.assertEqual(set_one_challenge_five("TestInputFiles/Set1Challenge5SuppliedFile.txt","ICE"),"0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f")
     
 #    Set 1, Challenge 6    
     def test_break_repeating_key_xor(self):
-        self.assertEqual(set_one_challenge_six("TestInputFiles/Set1Challenge6SuppliedFile.txt"),read_file("TestInputFiles/Set1Challenge6Answer.txt"))
+        self.assertEqual(set_one_challenge_six("TestInputFiles/Set1Challenge6SuppliedFile.txt"),read_file("TestAnswerFiles/Set1Challenge6Answer.txt"))
         
 #    Set 1, Challenge 7
     def test_unencrypt_AES128ECB(self):
-        self.assertEqual(set_one_challenge_seven("TestInputFiles/Set1Challenge7SuppliedFile.txt","YELLOW SUBMARINE"),read_file("TestInputFiles/Set1Challenge7Answer.txt"))
+        self.assertEqual(set_one_challenge_seven("TestInputFiles/Set1Challenge7SuppliedFile.txt","YELLOW SUBMARINE"),read_file("TestAnswerFiles/Set1Challenge7Answer.txt"))
    
+#    Set 1, Challenge 8
+    def test_detect_aesinecb(self):
+        self.assertEqual(set_one_challenge_eight("TestInputFiles/Set1Challenge8SuppliedFile.txt")[0],132)
+
 if __name__ == "__main__":
     unittest.main()

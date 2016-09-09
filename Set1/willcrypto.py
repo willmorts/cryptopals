@@ -13,13 +13,16 @@ def hex_to_byte_array(hex_data):
 
 def hex_to_64(hex):
     hex_data = hex.decode("hex")
-        
     return base64.b64encode(hex_data)
 
 #================ From base64 conversions ================================
 def b64_to_hex(base64_str):
     decoded_data = base64_str.decode("base64")        
     return decoded_data.encode("hex")
+    
+def b64_to_byte_array(base64_str):
+    decoded_data = base64_str.decode("base64")
+    return bytearray(decoded_data)
     
 #================ From plaintext conversions =============================
 def text_to_byte_array(text_str):
@@ -143,7 +146,7 @@ def get_ranked_key_lengths(total_byte_array):
     for test_keysize in range(2,max_keysize+1):
         total_hamm_diffs = 0
         num_hamm_diffs = 0
-        for loop_byte in range(0,(len(total_byte_array)/test_keysize)-test_keysize):
+        for loop_byte in range(0,(len(total_byte_array)/test_keysize)-1):
             keysize_chunk = loop_byte*test_keysize
             first_byte_arr = total_byte_array[keysize_chunk:(keysize_chunk+test_keysize)]
             second_byte_arr = total_byte_array[(keysize_chunk+test_keysize):(keysize_chunk+(test_keysize*2))]
@@ -165,6 +168,11 @@ def get_ranked_key_lengths(total_byte_array):
         
     return norm_hamm_diffs
     
+def encrypt_AES128ECB(msg,key):
+    obj = AES.new(key,AES.MODE_ECB)
+    result = obj.encrypt(msg)
+    return result    
+    
 # Both in form of plain text string (different to the rest
 def unencrypt_AES128ECB(msg,key):
 #    ECB-type by default
@@ -173,6 +181,28 @@ def unencrypt_AES128ECB(msg,key):
     result = obj.decrypt(msg)
     
     return result
+        
+def detect_aes_ecb(arr_byte_arr):
+#    array of tuples of line number with its score on likely stateless, deterministic encryption
+#    in form : [(line_number,score),(line_no,score)]
+    likely_aesecb_lines = []
+    for index in range(0,len(arr_byte_arr)):
+        if (detect_identical_blocks(arr_byte_arr[index],16)):
+            likely_aesecb_lines.append(index) 
+     
+    return likely_aesecb_lines
+        
+def detect_identical_blocks(byte_arr,block_size = 16):
+    for first_loop_byte in range(0,(len(byte_arr)/block_size)-1):
+        start_of_first_byte = first_loop_byte*block_size
+        first_byte_arr = byte_arr[start_of_first_byte:(start_of_first_byte+block_size)]
+        for second_loop_byte in range(first_loop_byte+1,(len(byte_arr)/block_size)):
+            start_of_second_byte = second_loop_byte*block_size
+            second_byte_arr = byte_arr[start_of_second_byte:(start_of_second_byte+block_size)]
+            if first_byte_arr == second_byte_arr:
+                return True     
+    
+    return False
         
 #================ GENERAL ADMIN FUNCTIONS ================================  
 def check_score_english_frequency(ascii_array):

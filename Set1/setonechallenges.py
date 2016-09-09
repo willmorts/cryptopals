@@ -67,8 +67,20 @@ def set_one_challenge_seven(file,key):
     message = message.decode("base64")    
     return unencrypt_AES128ECB(message,key)
 
+#================ Set 1, Challenge 8 ================== 
+#Looks through data file of lines of encrypted text, returns line number of most
+#likely encrypted with AES in ECB mode (where 0 is first line)
+def set_one_challenge_eight(file):
+    str_arr = read_file(file,False)
+    arr_byte_arr = []
+    for element in str_arr: 
+        element = re.sub('[^0-9a-zA-Z]+', '', element) 
+        arr_byte_arr.append(hex_to_byte_array(element))
+   
+    result = detect_aes_ecb(arr_byte_arr)
+    return result
     
-    
-    
+if __name__ == "__main__":
+    print set_one_challenge_eight("TestInputFiles/Set1Challenge8SuppliedFile.txt") 
    
         
